@@ -1,9 +1,8 @@
 #include "esp_system.h"
-#include "nofrendo.h"
+#include "../components/nofrendo/nofrendo.h"
 #include "esp_partition.h"
 
 #include "esp_err.h"
-#include "esp_log.h"
 #include <esp_sleep.h>
 
 #include "settings.h"
