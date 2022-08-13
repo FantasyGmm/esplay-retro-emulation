@@ -4,6 +4,8 @@
 export PATH=~/mkfw:$PATH
 
 cd esplay-launcher
+ffmpeg -i gfxTile.png -f rawvideo -pix_fmt rgb565 gfxTile.raw -y
+cat gfxTile.raw | xxd -i > gfxTile.inc
 #idf.py menuconfig
 idf.py build
 cd ../esplay-gnuboy
