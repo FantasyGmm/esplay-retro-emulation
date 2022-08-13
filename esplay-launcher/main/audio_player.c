@@ -466,7 +466,7 @@ static void handle_keypress(event_keypad_t keys, bool *quit)
 		int vol = audio_volume_get() - 5;
 		if (vol < 1)
 			vol = 1;
-			audio_volume_set(vol);
+		audio_volume_set(vol);
 
 		if (vol == 1)
 			audio_terminate();

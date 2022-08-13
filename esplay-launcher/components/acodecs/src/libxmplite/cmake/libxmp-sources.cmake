@@ -1,0 +1,30 @@
+set(LIBXMP_SRC_LIST 
+    src/virtual.c
+    src/format.c
+    src/period.c
+    src/player.c
+    src/read_event.c
+    src/misc.c
+    src/dataio.c
+    src/lfo.c
+    src/scan.c
+    src/control.c
+    src/filter.c
+    src/effects.c
+    src/mixer.c
+    src/mix_all.c
+    src/load_helpers.c
+    src/load.c
+    src/filetype.c
+    src/hio.c
+    src/smix.c
+    src/memio.c
+    src/win32.c
+    src/loaders/common.c
+    src/loaders/itsex.c
+    src/loaders/sample.c
+    src/loaders/xm_load.c
+    src/loaders/mod_load.c
+    src/loaders/s3m_load.c
+    src/loaders/it_load.c
+)

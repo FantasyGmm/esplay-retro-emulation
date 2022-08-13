@@ -27,7 +27,6 @@
 #include <sound.h>
 #include <pcm.h>
 #include <regs.h>
-#include <rtc.h>
 #include <gnuboy.h>
 
 #include <string.h>
@@ -38,9 +37,12 @@
 #include <sdcard.h>
 #include <settings.h>
 #include <power.h>
+#include <esp_sleep.h>
 #include "display_gb.h"
 #include "menu.h"
 #include "gb_frame.h"
+#include "cpuregs.h"
+#include "../components/gnuboy/rtc.h"
 
 extern int debug_trace;
 
@@ -65,9 +67,6 @@ const char *StateFileName = "/gnuboy/data/gnuboy.sav";
 const char *SD_BASE_PATH = "/sd";
 
 int32_t scaleAlg;
-
-#define GAMEBOY_WIDTH (160)
-#define GAMEBOY_HEIGHT (144)
 
 #define AUDIO_SAMPLE_RATE (32000)
 
@@ -157,14 +156,13 @@ esplay_scale_option scale_opt;
 
 void videoTask(void *arg)
 {
-    esp_err_t ret;
-    settings_load(SettingScaleMode, &scale_opt);
+	settings_load(SettingScaleMode, &scale_opt);
     videoTaskIsRunning = true;
 
     uint16_t *param;
     while (1)
     {
-        esp_task_wdt_feed();
+		esp_task_wdt_reset();
         xQueuePeek(vidQueue, &param, portMAX_DELAY);
 
         if (param == 1)
@@ -449,8 +447,6 @@ static void DoMenuHome()
 
 void app_main(void)
 {
-    printf("gnuboy (%s-%s).\n", COMPILEDATE, GITREV);
-
     settings_init();
 
     esplay_system_init();
@@ -690,7 +686,7 @@ void app_main(void)
 
         if (actualFrameCount == 60)
         {
-            float seconds = totalElapsedTime / (CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ * 1000000.0f); // 240000000.0f; // (240Mhz)
+            float seconds = totalElapsedTime / (CONFIG_ESP32S3_DEFAULT_CPU_FREQ_MHZ * 1000000.0f); // 240000000.0f; // (240Mhz)
             float fps = actualFrameCount / seconds;
 
             printf("HEAP:0x%x, FPS:%f\n", esp_get_free_heap_size(), fps);

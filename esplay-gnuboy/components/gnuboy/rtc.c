@@ -5,7 +5,6 @@
 #include <time.h>
 
 #include "defs.h"
-#include "mem.h"
 #include "rtc.h"
 #include "rc.h"
 

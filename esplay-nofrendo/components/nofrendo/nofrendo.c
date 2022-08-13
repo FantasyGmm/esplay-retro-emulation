@@ -200,7 +200,7 @@ static int internal_insert(const char *filename, system_t type)
 /* This tells main_loop to load this next image */
 void main_insert(const char *filename, system_t type)
 {
-   console.nextfilename = strdup(filename);
+   console.nextfilename = STRDUP(filename);
    console.nexttype = type;
 
    main_eject();

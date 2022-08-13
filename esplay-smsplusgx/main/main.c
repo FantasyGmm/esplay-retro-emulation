@@ -16,7 +16,7 @@
 #include "settings.h"
 #include "audio.h"
 #include "gamepad.h"
-#include "system.h"
+#include "../components/smsplus/system.h"
 #include "display.h"
 #include "sdcard.h"
 #include "power.h"
@@ -329,8 +329,6 @@ void system_manage_sram(uint8 *sram, int slot, int mode)
 //char cartName[1024];
 void app_main(void)
 {
-    printf("smsplusgx (%s-%s).\n", COMPILEDATE, GITREV);
-
     framebuffer[0] = heap_caps_malloc(256 * 192, MALLOC_CAP_8BIT | MALLOC_CAP_DMA);
     if (!framebuffer[0])
         abort();
@@ -693,7 +691,7 @@ void app_main(void)
 
         if (frame == 60)
         {
-            float seconds = totalElapsedTime / (CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ * 1000000.0f);
+            float seconds = totalElapsedTime / (CONFIG_ESP32S3_DEFAULT_CPU_FREQ_MHZ * 1000000.0f);
             float fps = frame / seconds;
 
             printf("HEAP:0x%x, FPS:%f, BATTERY:%d [%d]\n", esp_get_free_heap_size(), fps, battery.millivolts, battery.percentage);

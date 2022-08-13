@@ -1,25 +1,16 @@
 // Esplay Launcher - launcher for ESPLAY based on Gogo Launcher for Odroid Go.
-#include "limits.h" /* PATH_MAX */
 #include "freertos/FreeRTOS.h"
 #include "esp_wifi.h"
 #include "esp_system.h"
 #include "esp_event.h"
-#include "esp_event_loop.h"
-#include "driver/gpio.h"
-#include "esp_partition.h"
 #include "esp_ota_ops.h"
-#include "esp_heap_caps.h"
 #include "esp_http_server.h"
-#include "soc/dport_reg.h"
 
-#include "rom/rtc.h"
 #include "soc/soc.h"
 #include "soc/rtc.h"
-#include "soc/rtc_cntl_reg.h"
 
 #include "settings.h"
 #include "gamepad.h"
-#include "event.h"
 #include "display.h"
 #include "audio.h"
 #include "power.h"
@@ -71,7 +62,11 @@ static void handleCharging() {
 	guiCharging(0);
 
 	//Speed down
-	rtc_clk_cpu_freq_set(RTC_CPU_FREQ_2M);
+//	rtc_clk_cpu_freq_set(RTC_CPU_FREQ_2M);
+	rtc_cpu_freq_config_t* rcfc = (rtc_cpu_freq_config_t*) malloc(sizeof(rtc_cpu_freq_config_t));
+	memset(rcfc,0, sizeof(rtc_cpu_freq_config_t));
+	rtc_clk_cpu_freq_mhz_to_config(RTC_CPU_FREQ_2M,rcfc);
+	rtc_clk_cpu_freq_set_config(rcfc);
     input_gamepad_state prevKey;
     gamepad_read(&prevKey);
 	do {
@@ -100,7 +95,9 @@ static void handleCharging() {
         prevKey = key;
 	} while (r!=NO_CHRG);
 
-    rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
+//    rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
+	rtc_clk_cpu_freq_mhz_to_config(RTC_CPU_FREQ_240M,rcfc);
+	rtc_clk_cpu_freq_set_config(rcfc);
 }
 
 static void drawHomeScreen()
@@ -139,8 +136,8 @@ static void drawHomeScreen()
     UG_PutString(160, 50 + (56 * 2) + 13 + 18, "MENU");
 
     uint8_t volume = 25;
-    settings_load(SettingAudioVolume, &volume);
-    char volStr[3];
+    settings_load(SettingAudioVolume, (int32_t *) &volume);
+    char volStr[4];
     sprintf(volStr, "%i", volume);
     if (volume == 0)
     {

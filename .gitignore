@@ -5,6 +5,13 @@ esplay-nofrendo/build
 esplay-smsplusgx/build
 retro-esp32/build
 
+#.idea folder
+esplay-launcher/.idea
+esplay-gnuboy/.idea
+esplay-nofrendo/.idea
+esplay-smsplusgx/.idea
+retro-esp32/.idea
+
 # Backup sdkconfig
 esplay-launcher/sdkconfig.old
 esplay-gnuboy/sdkconfig.old

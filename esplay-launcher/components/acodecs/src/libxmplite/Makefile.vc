@@ -1,0 +1,68 @@
+# Visual Studio makefile for Windows:
+#	nmake -f Makefile.vc
+#
+# To disable Impulse Tracker support :
+#	nmake -f Makefile.vc DISABLE_IT=1
+#
+CC	= cl
+CFLAGS	= /O2 /W3 /MD /Iinclude\libxmp-lite /DBUILDING_DLL /DWIN32 \
+	  /D_USE_MATH_DEFINES /D_CRT_SECURE_NO_WARNINGS /DLIBXMP_CORE_PLAYER
+#CFLAGS	= $(CFLAGS) /DDEBUG
+LD	= link
+LDFLAGS	= /DLL /RELEASE /OUT:$(DLL)
+DLL	= libxmp-lite.dll
+
+!if $(DISABLE_IT)==1
+CFLAGS	= $(CFLAGS) /DLIBXMP_CORE_DISABLE_IT
+!endif
+
+OBJS	= \
+ src\virtual.obj \
+ src\format.obj \
+ src\period.obj \
+ src\player.obj \
+ src\read_event.obj \
+ src\misc.obj \
+ src\dataio.obj \
+ src\lfo.obj \
+ src\scan.obj \
+ src\control.obj \
+ src\filter.obj \
+ src\effects.obj \
+ src\mixer.obj \
+ src\mix_all.obj \
+ src\load_helpers.obj \
+ src\load.obj \
+ src\filetype.obj \
+ src\hio.obj \
+ src\smix.obj \
+ src\memio.obj \
+ src\win32.obj \
+ src\loaders\common.obj \
+ src\loaders\itsex.obj \
+ src\loaders\sample.obj \
+ src\loaders\xm_load.obj \
+ src\loaders\mod_load.obj \
+ src\loaders\s3m_load.obj \
+ src\loaders\it_load.obj \
+
+
+TEST	= src\md5.obj test\test.obj
+
+.c.obj:
+	$(CC) /c /nologo $(CFLAGS) /Fo$*.obj $<
+
+all: $(DLL)
+
+$(DLL): $(OBJS)
+	$(LD) $(LDFLAGS) $(OBJS)
+
+clean:
+	del $(OBJS) $(DLL) *.lib *.exp
+	del $(TEST)
+	del test\*.dll test\*.exe
+
+check: $(TEST)
+	$(LD) /RELEASE /OUT:test\libxmp-lite-test.exe $(TEST) libxmp-lite.lib
+	copy libxmp-lite.dll test
+	cd test & libxmp-lite-test

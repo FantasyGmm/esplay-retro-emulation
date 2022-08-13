@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <string.h>
 #include <stdint.h>
 #include <assert.h>
 
@@ -8,7 +7,7 @@
 #define STB_VORBIS_HEADER_ONLY
 #include <stb_vorbis.h>
 #include <dr_mp3.h>
-#include <xmp.h>
+#include "libxmplite/include/libxmp-lite/xmp.h"
 #include <dr_wav.h>
 #include <dr_flac.h>
 

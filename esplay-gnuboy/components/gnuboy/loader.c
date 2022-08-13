@@ -31,6 +31,7 @@
 #include "settings.h"
 #include "sdcard.h"
 #include "display.h"
+#include "../../main/display_gb.h"
 
 
 void* FlashAddress = 0;

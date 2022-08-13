@@ -364,12 +364,8 @@ extern bool forceConsoleReset;
 /* main emulation loop */
 void nes_emulate(void)
 {
-    int last_ticks, frames_to_render;
-
     osd_setsound(nes.apu->process);
 
-    last_ticks = nofrendo_ticks;
-    frames_to_render = 0;
     nes.scanline_cycles = 0;
     nes.fiq_cycles = (int) NES_FIQ_PERIOD;
 
@@ -425,7 +421,7 @@ void nes_emulate(void)
 
         if (frame == 60)
         {
-            float seconds = totalElapsedTime / (CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ * 1000000.0f);
+            float seconds = totalElapsedTime / (CONFIG_ESP32S3_DEFAULT_CPU_FREQ_MHZ * 1000000.0f);
             float fps = frame / seconds;
 
             printf("HEAP:0x%x, FPS:%f\n", esp_get_free_heap_size(), fps);

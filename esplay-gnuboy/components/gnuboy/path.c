@@ -17,7 +17,8 @@ char *path_search(char *name, char *mode, char *path)
 	char *p, *n;
 	int l;
 
-	if (buf) free(buf); buf = 0;
+	if (buf) free(buf);
+	buf = 0;
 	if (!path || !*path || *name == DIRSEP_CHAR)
 		return (buf = strdup(name));
 

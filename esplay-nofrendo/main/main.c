@@ -1,22 +1,10 @@
-#include "freertos/FreeRTOS.h"
-#include "esp_wifi.h"
 #include "esp_system.h"
-#include "esp_event.h"
-#include "esp_event_loop.h"
-#include "nvs_flash.h"
-#include "driver/gpio.h"
 #include "nofrendo.h"
 #include "esp_partition.h"
-#include "esp_spiffs.h"
 
 #include "esp_err.h"
 #include "esp_log.h"
-#include "esp_vfs_fat.h"
-#include "driver/sdmmc_host.h"
-#include "driver/sdspi_host.h"
-#include "sdmmc_cmd.h"
-#include <dirent.h>
-#include <limits.h>
+#include <esp_sleep.h>
 
 #include "settings.h"
 #include "power.h"
@@ -37,19 +25,11 @@ char *osd_getromdata()
     return (char*)ROM_DATA;
 }
 
-
-static const char *TAG = "main";
-
-
 int app_main(void)
 {
-    printf("nesemu (%s-%s).\n", COMPILEDATE, GITREV);
-
     settings_init();
 
     esplay_system_init();
-
-    esp_err_t ret;
 
     audio_init(32000);
 
@@ -139,9 +119,6 @@ int app_main(void)
     if (!romPath)
     {
         printf("osd_getromdata: Reading from flash.\n");
-
-        // copy from flash
-        spi_flash_mmap_handle_t hrom;
 
         const esp_partition_t* part = esp_partition_find_first(0x40, 0, NULL);
         if (part == 0)

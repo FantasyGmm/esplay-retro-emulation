@@ -334,7 +334,7 @@ void *_my_malloc(int size)
    void *temp;
    char fail[256];
 
-   temp = malloc(size);
+   temp = MALLOC(size);
 
    if (NULL == temp)
    {
@@ -356,7 +356,7 @@ void _my_free(void **data)
       ASSERT_MSG(fail);
    }
 
-   free(*data);
+   FREE(*data);
    *data = NULL; /* NULL our source */
 }
 
