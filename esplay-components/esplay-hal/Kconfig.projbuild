@@ -28,13 +28,16 @@ config HW_LCD_TYPE_ILI9341
 config HW_LCD_TYPE_ILI9342
 	bool "ILI9342 LCD"
 
+config HW_LCD_TYPE_ST7789V
+	bool "ST7789V LCD"
 endchoice
 
 config HW_LCD_TYPE
 	int
 	default 0 if ESPLAY20_HW
-  default 0 if ESPLAY_MICRO_HW
+  default 2 if ESPLAY_MICRO_HW
 	default 0 if HW_LCD_TYPE_ILI9341
 	default 1 if HW_LCD_TYPE_ILI9342
+	default 2 if HW_LCD_TYPE_ST7789V
 
 endmenu

@@ -1,12 +1,7 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_system.h"
-#include "driver/spi_master.h"
 #include "soc/gpio_struct.h"
-#include "driver/gpio.h"
 #include "display.h"
 #include "hourglass_empty_black_48dp.h"
 #include "splash.h"
@@ -15,14 +10,15 @@
 #define LINE_COUNT (8)
 
 uint16_t *line[LINE_BUFFERS];
-extern uint16_t myPalette[];
 
 void set_display_brightness(int percent)
 {
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9342)
     ili9342_backlight_percentage_set(percent);
-#else
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9341)
     ili9341_backlight_percentage_set(percent);
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789V)
+	st7789v_backlight_percentage_set(percent);
 #endif
 }
 
@@ -31,8 +27,10 @@ void backlight_deinit()
 
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9342)
     ili9342_backlight_deinit();
-#else
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9341)
     ili9341_backlight_deinit();
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789V)
+	st7789v_backlight_deinit();
 #endif
 }
 
@@ -40,8 +38,10 @@ void display_prepare(int percent)
 {
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9342)
     ili9342_prepare();
-#else
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9341)
     ili9341_prepare();
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789V)
+	st7789v_prepare();
 #endif
 }
 
@@ -49,8 +49,10 @@ void display_poweroff(int percent)
 {
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9342)
     ili9342_poweroff();
-#else
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9341)
     ili9341_poweroff();
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789V)
+	st7789v_poweroff();
 #endif
 }
 
@@ -270,7 +272,9 @@ void display_init()
     disp_spi_init();
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9342)
     ili9342_init();
-#else
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9341)
     ili9341_init();
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789V)
+	st7789v_init();
 #endif
 }

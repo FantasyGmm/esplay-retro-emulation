@@ -11,15 +11,20 @@
 
 #define LCD_TYPE_ILI9341 0
 #define LCD_TYPE_ILI9342 1
+#define LCD_TYPE_ST7789V 2
 
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9342)
     #include "ili9342.h"
     #define LCD_WIDTH ILI9342_HOR_RES
     #define LCD_HEIGHT ILI9342_VER_RES
-#else
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9341)
     #include "ili9341.h"
     #define LCD_WIDTH ILI9341_HOR_RES
     #define LCD_HEIGHT ILI9341_VER_RES
+#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789V)
+	#include "st7789v.h"
+    #define LCD_WIDTH ST7789V_HOR_RES
+    #define LCD_HEIGHT ST7789V_VER_RES
 #endif
 
 #ifdef __cplusplus
