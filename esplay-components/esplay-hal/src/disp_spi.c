@@ -65,7 +65,7 @@ void disp_spi_init(void)
     };
 
     //Initialize the SPI bus
-    ret = spi_bus_initialize(SPI2_HOST, &buscfg, 1);
+    ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
     assert(ret == ESP_OK);
 
     //Attach the LCD to the SPI bus

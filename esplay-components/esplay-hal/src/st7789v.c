@@ -23,13 +23,6 @@
 /*********************
  *      DEFINES
  *********************/
-#define MADCTL_MY 0x80
-#define MADCTL_MX 0x40
-#define MADCTL_MV 0x20
-#define MADCTL_ML 0x10
-#define MADCTL_MH 0x04
-#define TFT_RGB_BGR 0x08
-
 #define TFT_CMD_SWRESET 0x01
 #define TFT_CMD_SLEEP 0x10
 #define TFT_CMD_DISPLAY_OFF 0x28
