@@ -34,16 +34,16 @@ void backlight_deinit()
 #endif
 }
 
-void display_prepare(int percent)
-{
-#if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9342)
-    ili9342_prepare();
-#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9341)
-    ili9341_prepare();
-#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789V)
-	st7789v_prepare();
-#endif
-}
+//void display_prepare(int percent)
+//{
+//#if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9342)
+//    ili9342_prepare();
+//#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI9341)
+//    ili9341_prepare();
+//#elif (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789V)
+//	st7789v_prepare();
+//#endif
+//}
 
 void display_poweroff(int percent)
 {

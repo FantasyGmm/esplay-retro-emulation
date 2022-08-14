@@ -10,7 +10,7 @@
 #define DISP_SPI_CS 8
 #define DISP_SPI_DC 47
 #define DISP_BCKL 39
-
+#define DISP_RST 3
 // KEYPAD
 #ifdef CONFIG_ESPLAY20_HW
 #define A 32

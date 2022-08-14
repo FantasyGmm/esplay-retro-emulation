@@ -3,11 +3,7 @@
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
 #include "driver/sdmmc_host.h"
-#include "driver/sdspi_host.h"
 #include "sdmmc_cmd.h"
-#include "esp_heap_caps.h"
-#include "esp_spiffs.h"
-#include "driver/sdio_slave.h"
 #include <dirent.h>
 #include <string.h>
 #include <unistd.h>
@@ -191,20 +187,21 @@ esp_err_t sdcard_open(const char *base_path)
     {
         sdmmc_host_t host = SDMMC_HOST_DEFAULT();
         host.flags = SDMMC_HOST_FLAG_1BIT;
-        host.max_freq_khz = SDMMC_FREQ_HIGHSPEED;
+//        host.max_freq_khz = SDMMC_FREQ_HIGHSPEED;
 
-        sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
-        slot_config.width = 1;
-
+        sdmmc_slot_config_t slot_config = {
+			    .width = 1, .flags = 0,
+			    .d0 = 17, .d1 = -1, .d2 = -1, .d3 = -1, .clk = 21, .cmd = 14,
+			    .d4 = -1, .d5 = -1, .d6 = -1, .d7 = -1, .cd = -1, .wp = -1,
+	    };
         // Options for mounting the filesystem.
         // If format_if_mount_failed is set to true, SD card will be partitioned and
         // formatted in case when mounting fails.
-        esp_vfs_fat_sdmmc_mount_config_t mount_config;
-        memset(&mount_config, 0, sizeof(mount_config));
-
-        mount_config.format_if_mount_failed = false;
-        mount_config.max_files = 5;
-
+	    esp_vfs_fat_sdmmc_mount_config_t mount_config = {
+			    .format_if_mount_failed = false,
+			    .max_files = 5,
+			    .allocation_unit_size = 32 * 1024
+	    };
         // Use settings defined above to initialize SD card and mount FAT filesystem.
         // Note: esp_vfs_fat_sdmmc_mount is an all-in-one convenience function.
         // Please check its source code and implement error recovery when developing

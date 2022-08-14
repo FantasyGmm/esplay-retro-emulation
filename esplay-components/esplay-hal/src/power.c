@@ -3,7 +3,6 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_system.h"
 #include "esp_event.h"
-#include "driver/rtc_io.h"
 #include <driver/adc.h>
 #include <esp_sleep.h>
 #include "esp_adc_cal.h"
@@ -76,9 +75,6 @@ void system_sleep()
 
 void esplay_system_init()
 {
-    rtc_gpio_deinit(MENU);
-    //rtc_gpio_deinit(GPIO_NUM_14);
-
     system_initialized = true;
 }
 

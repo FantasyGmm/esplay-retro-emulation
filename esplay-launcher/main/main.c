@@ -415,7 +415,7 @@ void app_main(void)
     gamepad_init();
 
     // Display
-    display_prepare();
+//    display_prepare();
     display_init();
 
     int brightness = 50;

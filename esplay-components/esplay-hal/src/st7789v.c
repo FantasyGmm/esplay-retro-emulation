@@ -60,12 +60,16 @@ DRAM_ATTR static const lcd_init_cmd_t st_sleep_cmds[] = {
 
 void st7789v_init(void)
 {
+	gpio_set_direction(DISP_RST,GPIO_MODE_OUTPUT);
+	gpio_set_level(DISP_RST,0);
+	vTaskDelay(120 / portTICK_RATE_MS);
+	gpio_set_level(DISP_RST,1);
 	lcd_init_cmd_t st_init_cmds[] = {
 			{TFT_CMD_SWRESET, {0}, 0x80},
 			//-----------------------ST7789V Frame rate setting-----------------//
 			{0x3A, {0X05}, 1},  //65k mode
 			{0xC5, {0x1A}, 1},  //VCOM
-			{0x36, {0x00}, 1},      //屏幕显示方向设置
+			{0x36, {0x60}, 1},      //屏幕显示方向设置
 			//-------------ST7789V Frame rate setting-----------//
 			{0xB2, {0x05, 0x05, 0x00, 0x33, 0x33}, 5},  //Porch Setting
 			{0xB7, {0x05}, 1}, //Gate Control //12.2v   -10.43v
@@ -92,8 +96,8 @@ void st7789v_init(void)
 	gpio_set_direction(DISP_BCKL, GPIO_MODE_OUTPUT);
 
 	//Reset the display
-	st7789v_send_cmd(TFT_CMD_SWRESET);
-	vTaskDelay(100 / portTICK_RATE_MS);
+//	st7789v_send_cmd(TFT_CMD_SWRESET);
+//	vTaskDelay(100 / portTICK_RATE_MS);
 
 	printf("ST7789V initialization.\n");
 
@@ -168,15 +172,10 @@ void st7789v_poweroff()
 	}
 }
 
-void st7789v_prepare()
-{
-	// Return use of backlight pin
-	esp_err_t err = rtc_gpio_deinit(DISP_BCKL);
-	if (err != ESP_OK)
-	{
-		abort();
-	}
-}
+//void st7789v_prepare()
+//{
+//	// Return use of backlight pin
+//}
 
 /**********************
  *   STATIC FUNCTIONS
