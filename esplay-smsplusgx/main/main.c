@@ -355,7 +355,7 @@ void app_main(void)
     // Boot state overrides
     bool forceConsoleReset = false;
 
-    display_prepare();
+//    display_prepare();
 
     switch (esp_sleep_get_wakeup_cause())
     {

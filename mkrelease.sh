@@ -19,6 +19,6 @@ cd ../esplay-smsplusgx
 idf.py build
 cd ..
 
-../mkfw Retro-Emulation assets/tile.raw 0 16 1391632 launcher esplay-launcher/build/esplay-launcher.bin 0 17 642512 esplay-nofrendo esplay-nofrendo/build/esplay-nofrendo.bin 0 18 619072 esplay-gnuboy esplay-gnuboy/build/esplay-gnuboy.bin 0 19 1328864 esplay-smsplusgx esplay-smsplusgx/build/esplay-smsplusgx.bin
+../mkfw Retro-Emulation assets/tile.raw 0 16 1297504 launcher esplay-launcher/build/esplay-launcher.bin 0 17 642496 esplay-nofrendo esplay-nofrendo/build/esplay-nofrendo.bin 0 18 619056 esplay-gnuboy esplay-gnuboy/build/esplay-gnuboy.bin 0 19 1328848 esplay-smsplusgx esplay-smsplusgx/build/esplay-smsplusgx.bin
 rm esplay-retro-emu.fw
 mv firmware.fw esplay-retro-emu.fw

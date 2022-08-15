@@ -57,7 +57,7 @@ int app_main(void)
 
     // display
     display_init();
-    display_prepare();
+//    display_prepare();
 
     // display brightness
     int brightness;

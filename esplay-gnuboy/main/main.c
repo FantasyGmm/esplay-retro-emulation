@@ -455,7 +455,7 @@ void app_main(void)
     audio_init(AUDIO_SAMPLE_RATE);
 
     // Display
-    display_prepare();
+//    display_prepare();
     display_init();
 
     // set brightness
