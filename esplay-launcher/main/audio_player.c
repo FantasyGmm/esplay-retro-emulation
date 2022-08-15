@@ -14,7 +14,6 @@
 #include <limits.h>
 #include <unistd.h>
 #include <string.h>
-#include <time.h>
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
@@ -454,7 +453,7 @@ static void handle_keypress(event_keypad_t keys, bool *quit)
 		*quit = true;
 	if (!keys.last_state.values[GAMEPAD_INPUT_UP] && keys.state.values[GAMEPAD_INPUT_UP])
 	{
-		int vol = audio_volume_get() + 5;
+		int vol = audio_volume_get() + 2;
 		if (vol > 100)
 			vol = 100;
 		audio_volume_set(vol);
@@ -463,7 +462,7 @@ static void handle_keypress(event_keypad_t keys, bool *quit)
 	}
 	if (!keys.last_state.values[GAMEPAD_INPUT_DOWN] && keys.state.values[GAMEPAD_INPUT_DOWN])
 	{
-		int vol = audio_volume_get() - 5;
+		int vol = audio_volume_get() - 2;
 		if (vol < 1)
 			vol = 1;
 		audio_volume_set(vol);

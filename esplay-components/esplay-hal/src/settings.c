@@ -12,7 +12,6 @@
 #include <nvs.h>
 #include "nvs_flash.h"
 #include <assert.h>
-#include <esp_heap_caps.h>
 #include <limits.h>
 #include <esp_partition.h>
 #include <esp_ota_ops.h>

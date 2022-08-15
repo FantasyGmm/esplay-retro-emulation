@@ -8,7 +8,7 @@
 #include "pin_definitions.h"
 
 static float Volume = 1.0f;
-static int volumeLevel = 30;
+static int volumeLevel = 20;
 static int sampleRate;
 
 int audio_volume_get()
@@ -23,10 +23,10 @@ void audio_volume_set(int value)
         printf("audio_volume_set: value out of range (%d)\n", value);
         abort();
     }
-
+	printf("audio_volume_set: value (%d)\n", value);
     volumeLevel = value;
-    Volume = (float)(volumeLevel*10) * 0.001f;
-
+//    Volume = (float)(volumeLevel*10) * 0.001f;
+	Volume = (float)(volumeLevel*2) * 0.001f;
     if (volumeLevel == 0)
         audio_amp_disable();
 }
