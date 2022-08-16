@@ -19,6 +19,8 @@ esplay-nofrendo/sdkconfig.old
 esplay-smsplusgx/sdkconfig.old
 retro-esp32/sdkconfig.old
 
+mkfw
+build.sh
 # Prerequisites
 *.d
 

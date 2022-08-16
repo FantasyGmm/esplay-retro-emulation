@@ -490,7 +490,6 @@ void app_main(void)
     {
         printf("\nAP Disabled, enabled wifi to use File Manager\n");
     }
-
     drawHomeScreen();
     int menuItem = 0;
     int prevItem = 0;
