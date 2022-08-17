@@ -33,8 +33,9 @@ def build():
     for fbp in fileLabel:
         tmp = fbp + "/build/" + fbp + ".bin"
         size = os.path.getsize(tmp)
-#        if (size % 64 * 1024) != 0:
-#            size += 64 * 1024 - (size % 64 * 1024)
+		#64k align
+        if (size % (64 * 1024)) != 0:
+            size += (64 * 1024) - (size % (64 * 1024))
         fileSize.append(size)
         print("file: " + tmp + "size: " + str(os.path.getsize(tmp)))
     mkfw_cmds = "./mkfw Retro-Emulation assets/tile.raw "

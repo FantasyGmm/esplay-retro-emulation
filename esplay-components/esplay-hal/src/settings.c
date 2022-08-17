@@ -140,7 +140,7 @@ void system_application_set(int slot)
         esp_err_t err = esp_ota_set_boot_partition(partition);
         if (err != ESP_OK)
         {
-            printf("%s: esp_ota_set_boot_partition failed.\n", __func__);
+            printf("%s: esp_ota_set_boot_partition failed. err: %X,slot: %d\n", __func__,err,slot);
             abort();
         }
     }

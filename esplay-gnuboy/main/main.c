@@ -1,23 +1,7 @@
 #include "freertos/FreeRTOS.h"
-#include "esp_wifi.h"
 #include "esp_system.h"
-#include "esp_event.h"
-#include "esp_event_loop.h"
-#include "nvs_flash.h"
-#include "driver/gpio.h"
-#include "driver/spi_master.h"
-#include "driver/ledc.h"
 #include "driver/i2s.h"
-#include "driver/adc.h"
-#include "esp_adc_cal.h"
 #include "esp_task_wdt.h"
-#include "esp_spiffs.h"
-#include "driver/rtc_io.h"
-#include "esp_partition.h"
-#include "esp_ota_ops.h"
-#include "esp_task_wdt.h"
-
-#include <limits.h>
 #include <loader.h>
 #include <hw.h>
 #include <lcd.h>
@@ -28,9 +12,7 @@
 #include <pcm.h>
 #include <regs.h>
 #include <gnuboy.h>
-
 #include <string.h>
-
 #include <display.h>
 #include <gamepad.h>
 #include <audio.h>
@@ -291,7 +273,7 @@ static void SaveState()
         FILE *f = fopen(pathName, "w");
         if (f == NULL)
         {
-            printf("%s: fopen save failed\n", __func__);
+            printf("%s: fopen %s save failed\n", __func__,romPath);
             abort();
         }
 
@@ -337,7 +319,7 @@ static void LoadState(const char *cartName)
         FILE *f = fopen(pathName, "r");
         if (f == NULL)
         {
-            printf("LoadState: fopen load failed\n");
+	        printf("%s: fopen %s load failed\n", __func__,pathName);
         }
         else
         {
@@ -464,7 +446,7 @@ void app_main(void)
     set_display_brightness(brightness);
 
     // volume
-    int volume = 25;
+    int volume = 20;
     settings_load(SettingAudioVolume, &volume);
     audio_volume_set(volume);
 

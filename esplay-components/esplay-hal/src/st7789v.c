@@ -17,7 +17,7 @@
 #include "esp_system.h"
 #include "lcd_struct.h"
 #include "driver/ledc.h"
-#include "driver/rtc_io.h"
+//#include "driver/rtc_io.h"
 #include "pin_definitions.h"
 
 /*********************
@@ -152,20 +152,19 @@ void st7789v_poweroff()
 		}
 		cmd++;
 	}
-
-	err = rtc_gpio_init(DISP_BCKL);
+//	err = rtc_gpio_init(DISP_BCKL);
+//	if (err != ESP_OK)
+//	{
+//		abort();
+//	}
+	err = gpio_set_direction(DISP_BCKL,GPIO_MODE_OUTPUT);
+//	err = rtc_gpio_set_direction(DISP_BCKL, RTC_GPIO_MODE_OUTPUT_ONLY);
 	if (err != ESP_OK)
 	{
 		abort();
 	}
-
-	err = rtc_gpio_set_direction(DISP_BCKL, RTC_GPIO_MODE_OUTPUT_ONLY);
-	if (err != ESP_OK)
-	{
-		abort();
-	}
-
-	err = rtc_gpio_set_level(DISP_BCKL, LCD_BACKLIGHT_ON_VALUE ? 0 : 1);
+	err = gpio_set_level(DISP_BCKL,LCD_BACKLIGHT_ON_VALUE ? 0 : 1);
+//	err = rtc_gpio_set_level(DISP_BCKL, LCD_BACKLIGHT_ON_VALUE ? 0 : 1);
 	if (err != ESP_OK)
 	{
 		abort();
