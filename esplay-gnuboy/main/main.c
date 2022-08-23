@@ -201,8 +201,9 @@ void videoTask(void *arg)
             showOverlay = 0;
             vTaskDelay(10);
         }
-        else
-            write_gb_frame(param, scale_opt);
+        else{
+	        write_gb_frame(param, scale_opt);
+		}
 
         xQueueReceive(vidQueue, &param, portMAX_DELAY);
     }
@@ -539,7 +540,7 @@ void app_main(void)
     xTaskCreatePinnedToCore(&videoTask, "videoTask", 1024 * 3, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(&audioTask, "audioTask", 2048, NULL, 5, NULL, 1); //768
 
-//    debug_trace = 1;
+    debug_trace = 1;
     emu_reset();
 
     //&rtc.carry, &rtc.stop,

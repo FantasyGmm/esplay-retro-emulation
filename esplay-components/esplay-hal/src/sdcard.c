@@ -307,11 +307,11 @@ size_t sdcard_copy_file_to_memory(const char *path)
 		    fseek(f,0L,SEEK_END);
 		    long romSize = ftell(f);
 		    rewind(f);
-		    printf("sdcard_copy_file_to_memory: file size: %ld",romSize/1024);
+		    printf("sdcard_copy_file_to_memory: file size: %ld kb\n",romSize/1024);
 		    ROM_DATA = malloc(sizeof(uint8_t)*romSize);
 		    if (ROM_DATA == NULL)
 		    {
-			    printf("sdcard_copy_file_to_memory: malloc mem fail");
+			    printf("sdcard_copy_file_to_memory: malloc mem fail\n");
 			    abort();
 		    }
 		    memset(ROM_DATA,0,sizeof(uint8_t)*romSize);

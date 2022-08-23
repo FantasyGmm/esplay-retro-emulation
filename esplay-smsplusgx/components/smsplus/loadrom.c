@@ -380,19 +380,14 @@ int load_rom(char *filename)
         fd = fopen("/sd/roms/col/BIOS.col", "rb");
         if (!fd)
             abort();
-
-        coleco.rom = ESP32_PSRAM + 0x100000;
-
+        coleco.rom = malloc(0x2000);
         fread(coleco.rom, 0x2000, 1, fd);
-
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("memw");
-
+//        __asm__("nop");
+//        __asm__("nop");
+//        __asm__("nop");
+//        __asm__("nop");
+//        __asm__("memw");
         fclose(fd);
-
         option.console = 6;
         printf("Colecovision BIOS loaded.\n");
     }
@@ -411,14 +406,14 @@ int load_rom(char *filename)
     if (cart.size < 0x4000)
         cart.size = 0x4000;
 
-    cart.rom = ESP32_PSRAM;
+    cart.rom = malloc(cart.size);
     size_t cnt = fread(cart.rom, cart.size, 1, fd);
     //if (cnt != 1) abort();
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("memw");
+//    __asm__("nop");
+//    __asm__("nop");
+//    __asm__("nop");
+//    __asm__("nop");
+//    __asm__("memw");
 
     fclose(fd);
 

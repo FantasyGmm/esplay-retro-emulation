@@ -42,7 +42,7 @@ static void disp_spi_pre_transfer_callback(spi_transaction_t *t);
  **********************/
 void disp_spi_init(void)
 {
-    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[DISP_SPI_DC], PIN_FUNC_GPIO);
+//    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[DISP_SPI_DC], PIN_FUNC_GPIO);
     gpio_set_direction(DISP_SPI_DC, GPIO_MODE_OUTPUT);
     esp_err_t ret;
 

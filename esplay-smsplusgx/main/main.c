@@ -1,22 +1,13 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_system.h"
-#include "esp_event.h"
-#include "nvs_flash.h"
-#include "esp_partition.h"
 #include "driver/i2s.h"
-#include "esp_spiffs.h"
-#include "nvs_flash.h"
 #include "esp_sleep.h"
-#include "driver/rtc_io.h"
-#include "esp_ota_ops.h"
-#include <limits.h>
 
 #include "../components/smsplus/shared.h"
 
 #include "settings.h"
 #include "audio.h"
 #include "gamepad.h"
-#include "../components/smsplus/system.h"
 #include "display.h"
 #include "sdcard.h"
 #include "power.h"
@@ -39,8 +30,6 @@ int currentFramebuffer = 0;
 uint32_t *audioBuffer = NULL;
 int audioBufferCount = 0;
 int showOverlay = 0;
-
-spi_flash_mmap_handle_t hrom;
 
 QueueHandle_t vidQueue;
 TaskHandle_t videoTaskHandle;
@@ -154,11 +143,9 @@ char unalChar(const unsigned char *adr)
         return ((v >> 24) & 0xff);
 
     abort();
-    return 0;
 }
 
 const char *StateFileName = "/storage/smsplus.sav";
-const char *StoragePath = "/storage";
 
 static void SaveState()
 {
@@ -409,18 +396,18 @@ void app_main(void)
     // load alghorithm
     settings_load(SettingAlg, &scaleAlg);
 
-    const char *FILENAME = NULL;
+    const char *FILE_NAME = NULL;
 
     char *cartName = settings_load_str(SettingRomPath);
 
     if (!cartName)
     {
         // Load fixed file name
-        FILENAME = "/sd/roms/gg/test.gg";
+	    FILE_NAME = "/sd/roms/gg/test.gg";
     }
     else
     {
-        FILENAME = cartName;
+	    FILE_NAME = cartName;
     }
 
     // Open SD card
@@ -432,7 +419,7 @@ void app_main(void)
 
     display_show_hourglass();
     // Load the ROM
-    load_rom(FILENAME);
+    load_rom(FILE_NAME);
 
     write_sms_frame(NULL, NULL, false, SCALE_STRETCH);
 
@@ -694,7 +681,7 @@ void app_main(void)
             float seconds = totalElapsedTime / (CONFIG_ESP32S3_DEFAULT_CPU_FREQ_MHZ * 1000000.0f);
             float fps = frame / seconds;
 
-            printf("HEAP:0x%x, FPS:%f, BATTERY:%d [%d]\n", esp_get_free_heap_size(), fps, battery.millivolts, battery.percentage);
+            printf("HEAP: %d kb, FPS:%f, BATTERY:%d [%d]\n", esp_get_free_heap_size()/1024, fps, battery.millivolts, battery.percentage);
 
             frame = 0;
             totalElapsedTime = 0;

@@ -210,7 +210,7 @@ int rom_load()
 //			esp_err_t err = esp_partition_read(part, offset, (void *)(data + offset), 0x100000);
 //			if (err != ESP_OK)
 //			{
-//				printf("esp_partition_read failed. size = %x, offset = %x (%d)\n", part->size, offset, err);
+//				printf("esp_partition_read failed. size = %#X, offset = %#X (%d)\n", part->size, offset, err);
 //				abort();
 //			}
 //		}
@@ -237,7 +237,7 @@ int rom_load()
 		fseek(RomFile,0L,SEEK_END);
 		long romSize = ftell(RomFile);
 		rewind(RomFile);
-		printf("rom_load: file size: %ld\n",romSize/1024);
+		printf("rom_load: file size: %ld kb\n",romSize/1024);
 		data = malloc(sizeof(uint8_t)*romSize);
 		if (data == NULL)
 		{
@@ -249,11 +249,20 @@ int rom_load()
 		printf("rom_load: free heap: %d kb,%d mb\n",esp_get_free_heap_size()/1024,esp_get_free_heap_size()/1024/1024);
 		printf("rom_load: free internal heap: %d kb\n",esp_get_free_internal_heap_size()/1024);
 		// copy
-#if 1
+#if 0
+//		size_t ret = 0;
+//		while (true)
+//		{
+//			size_t count = fread((uint8_t *)data + ret, 1, 512, RomFile);
+//            printf("rom_load: copy addr: %#X ret: %#X %d data: %#X\n",((int)data+ret),ret,ret,*(data+ret));
+//			ret += count;
+//			if (count < 512) break;
+//		}
 		const size_t BLOCK_SIZE = 512;
 		for (size_t offset = 0; offset < 0x4000; offset += BLOCK_SIZE)
 		{
 			size_t count = fread((uint8_t*)data + offset, 1, BLOCK_SIZE, RomFile);
+//            printf("rom_load: copy addr: %#X ret: %#X\n",((int)data+offset),count);
 //			__asm__("nop");
 //			__asm__("nop");
 //			__asm__("nop");
@@ -264,19 +273,12 @@ int rom_load()
 #else
 		size_t count = fread((uint8_t*)data, 1, 0x4000, RomFile);
 		printf("loader: read count: %d\n",count);
-//		size_t *a = data;
-//		for (int i = 0; i < count; ++i)
-//		{
-//			printf("loader: read address:%0X value: %0X\n",(int )a,*a);
-//			a += sizeof(size_t);
-//		}
 		if (count < 0x4000)
 		{
-            //odroid_display_show_sderr(ODROID_SD_ERR_BADFILE);
-			printf("loader: fread failed.\n");
+			//odroid_display_show_sderr(ODROID_SD_ERR_BADFILE);
+			printf("rom_load: fread failed.\n");
 			abort();
 		}
-
 #endif
 
 		BankCache[0] = 1;
@@ -372,8 +374,7 @@ int rom_load()
 			abort();
 		}
 	}
-
-
+	printf("rom_load: ram.sbank address :%#X",(size_t)ram.sbank);
 	initmem(ram.sbank, 8192 * mbc.ramsize);
 	initmem(ram.ibank, 4096 * 8);
 
