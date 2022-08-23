@@ -275,7 +275,16 @@ size_t sdcard_get_filesize(const char *path)
     return ret;
 }
 
-size_t sdcard_copy_file_to_memory(const char *path, void *ptr)
+static char* ROM_DATA = (char*)0x3D000000;
+
+char *osd_getromdata()
+{
+
+    printf("Initialized. ROM@%p\n", ROM_DATA);
+    return (char*)ROM_DATA;
+}
+
+size_t sdcard_copy_file_to_memory(const char *path)
 {
     size_t ret = 0;
 
@@ -285,34 +294,45 @@ size_t sdcard_copy_file_to_memory(const char *path, void *ptr)
     }
     else
     {
-        if (!ptr)
-        {
-            printf("sdcard_copy_file_to_memory: ptr is null.\n");
-        }
-        else
-        {
-            FILE *f = fopen(path, "rb");
-            if (f == NULL)
-            {
-                printf("sdcard_copy_file_to_memory: fopen failed.\n");
-            }
-            else
-            {
-                // copy
-                const size_t BLOCK_SIZE = 512;
-                while (true)
-                {
-                    __asm__("memw");
-                    size_t count = fread((uint8_t *)ptr + ret, 1, BLOCK_SIZE, f);
-                    __asm__("memw");
-
-                    ret += count;
-
-                    if (count < BLOCK_SIZE)
-                        break;
-                }
-            }
-        }
+	    FILE *f = fopen(path, "rb");
+	    if (f == NULL)
+	    {
+		    printf("sdcard_copy_file_to_memory: fopen failed.\n");
+	    }
+	    else
+	    {
+		    printf("sdcard_copy_file_to_memory: read before free heap: %d kb,%d mb\n",esp_get_free_heap_size()/1024,esp_get_free_heap_size()/1024/1024);
+		    printf("sdcard_copy_file_to_memory: read before free internal heap: %d kb\n",esp_get_free_internal_heap_size()/1024);
+		    //get size
+		    fseek(f,0L,SEEK_END);
+		    long romSize = ftell(f);
+		    rewind(f);
+		    printf("sdcard_copy_file_to_memory: file size: %ld",romSize/1024);
+		    ROM_DATA = malloc(sizeof(uint8_t)*romSize);
+		    if (ROM_DATA == NULL)
+		    {
+			    printf("sdcard_copy_file_to_memory: malloc mem fail");
+			    abort();
+		    }
+		    memset(ROM_DATA,0,sizeof(uint8_t)*romSize);
+		    printf("sdcard_copy_file_to_memory: malloc mem size:%ld kb，address:%#x.\n",sizeof(uint8_t)*romSize/1024,(size_t)ROM_DATA);
+		    printf("sdcard_copy_file_to_memory: free heap: %d kb,%d mb\n",esp_get_free_heap_size()/1024,esp_get_free_heap_size()/1024/1024);
+		    printf("sdcard_copy_file_to_memory: free internal heap: %d kb\n",esp_get_free_internal_heap_size()/1024);
+		    // copy
+		    const size_t BLOCK_SIZE = 512;
+		    while (true)
+		    {
+//	                printf("sdcard_copy_file_to_memory: copy addr: %X ret: %X\n",((int)ramPtr+ret),ret);
+//                    __asm__("memw");
+			    size_t count = fread((uint8_t *)ROM_DATA + ret, 1, BLOCK_SIZE, f);
+//                    __asm__("memw");
+			    ret += count;
+			    if (count < BLOCK_SIZE)
+				    break;
+		    }
+		    printf("sdcard_copy_file_to_memory: copy done\n");
+		    printf("osd_getromdata: copy %s file to memory %X.\n",path,(int)ROM_DATA);
+	    }
     }
 
     return ret;

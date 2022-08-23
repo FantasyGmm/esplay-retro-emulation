@@ -511,8 +511,8 @@ void app_main(void)
     write_gb_frame(NULL, SCALE_STRETCH);
 
     // draw frame
-    //renderGfx(0,0,32,240,gb_frame.pixel_data,0,0,gb_frame.width);
-    //renderGfx(32+256,0,32,240,gb_frame.pixel_data,32,0,gb_frame.width);
+//    renderGfx(0,0,32,240,gb_frame.pixel_data,0,0,gb_frame.width);
+//    renderGfx(32+256,0,32,240,gb_frame.pixel_data,32,0,gb_frame.width);
 
     // Load ROM
     loader_init(NULL);
@@ -520,7 +520,6 @@ void app_main(void)
     // Allocate display buffers
     displayBuffer[0] = heap_caps_malloc(160 * 144 * 2, MALLOC_CAP_8BIT | MALLOC_CAP_DMA);
     displayBuffer[1] = heap_caps_malloc(160 * 144 * 2, MALLOC_CAP_8BIT | MALLOC_CAP_DMA);
-
     if (displayBuffer[0] == 0 || displayBuffer[1] == 0)
         abort();
 
@@ -540,7 +539,7 @@ void app_main(void)
     xTaskCreatePinnedToCore(&videoTask, "videoTask", 1024 * 3, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(&audioTask, "audioTask", 2048, NULL, 5, NULL, 1); //768
 
-    //debug_trace = 1;
+//    debug_trace = 1;
     emu_reset();
 
     //&rtc.carry, &rtc.stop,
@@ -601,7 +600,6 @@ void app_main(void)
     {
         emu_reset();
     }
-
     gamepad_read(&lastJoysticState);
     while (true)
     {
@@ -665,13 +663,12 @@ void app_main(void)
         totalElapsedTime += elapsedTime;
         ++frame;
         ++actualFrameCount;
-
         if (actualFrameCount == 60)
         {
             float seconds = totalElapsedTime / (CONFIG_ESP32S3_DEFAULT_CPU_FREQ_MHZ * 1000000.0f); // 240000000.0f; // (240Mhz)
             float fps = actualFrameCount / seconds;
 
-            printf("HEAP:0x%x, FPS:%f\n", esp_get_free_heap_size(), fps);
+            printf("HEAP: %d KB, FPS:%f\n", esp_get_free_heap_size()/1024, fps);
 
             actualFrameCount = 0;
             totalElapsedTime = 0;

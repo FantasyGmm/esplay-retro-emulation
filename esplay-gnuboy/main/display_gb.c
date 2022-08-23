@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "display_gb.h"
 #include "display.h"
 #include "disp_spi.h"

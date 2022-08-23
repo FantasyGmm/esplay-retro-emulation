@@ -8,5 +8,5 @@ esp_err_t sdcard_open();
 esp_err_t sdcard_close();
 int sdcard_get_files_count(const char *path);
 size_t sdcard_get_filesize(const char *path);
-size_t sdcard_copy_file_to_memory(const char *path, void *ptr);
+size_t sdcard_copy_file_to_memory(const char *path);
 char *sdcard_create_savefile_path(const char *base_path, const char *fileName);

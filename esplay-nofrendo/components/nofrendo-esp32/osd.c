@@ -35,7 +35,8 @@ int osd_main(int argc, char *argv[])
 {
    config.filename = configfilename;
 
-   return main_loop("rom", system_nes);
+//   return main_loop("rom", system_nes);
+   return main_loop(argv[0], system_nes);
 }
 
 /* File system interface */

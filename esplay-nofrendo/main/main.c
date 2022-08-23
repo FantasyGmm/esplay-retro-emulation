@@ -13,16 +13,8 @@
 #include "audio.h"
 
 const char* SD_BASE_PATH = "/sd";
-static char* ROM_DATA = (char*)0x3f800000;
-
 extern bool forceConsoleReset;
 int32_t scaleAlg;
-
-char *osd_getromdata()
-{
-    printf("Initialized. ROM@%p\n", ROM_DATA);
-    return (char*)ROM_DATA;
-}
 
 int app_main(void)
 {
@@ -50,7 +42,7 @@ int app_main(void)
 
 
     int startHeap = esp_get_free_heap_size();
-    printf("A HEAP:0x%x\n", startHeap);
+    printf("A HEAP:%d kb\n", startHeap/1024);
 
     // Joystick.
     gamepad_init();
@@ -117,21 +109,21 @@ int app_main(void)
     char *romPath = settings_load_str(SettingRomPath);
     if (!romPath)
     {
-        printf("osd_getromdata: Reading from flash.\n");
-
-        const esp_partition_t* part = esp_partition_find_first(0x40, 0, NULL);
-        if (part == 0)
-        {
-            printf("esp_partition_find_first failed.\n");
-            abort();
-        }
-
-        esp_err_t err = esp_partition_read(part, 0, (void*)ROM_DATA, 0x100000);
-        if (err != ESP_OK)
-        {
-            printf("esp_partition_read failed. size = %x (%d)\n", part->size, err);
-            abort();
-        }
+//        printf("osd_getromdata: Reading from flash.\n");
+//
+//        const esp_partition_t* part = esp_partition_find_first(0x40, 0, NULL);
+//        if (part == 0)
+//        {
+//            printf("esp_partition_find_first failed.\n");
+//            abort();
+//        }
+//
+//        esp_err_t err = esp_partition_read(part, 0, (void*)ROM_DATA, 0x100000);
+//        if (err != ESP_OK)
+//        {
+//            printf("esp_partition_read failed. size = %x (%d)\n", part->size, err);
+//            abort();
+//        }
     }
     else
     {
@@ -141,13 +133,14 @@ int app_main(void)
         esp_err_t r = sdcard_open(SD_BASE_PATH);
         if (r != ESP_OK)
         {
+	        printf("osd_getromdata: Reading from sdcard fail.\n");
             abort();
         }
 
         display_clear(0);
         display_show_hourglass();
-        size_t fileSize = sdcard_copy_file_to_memory(romPath, ROM_DATA);
-        printf("app_main: fileSize=%d\n", fileSize);
+        size_t fileSize = sdcard_copy_file_to_memory(romPath);
+        printf("app_main: fileSize=%d/1024 kb\n", fileSize);
         if (fileSize == 0)
         {
             abort();
@@ -162,10 +155,8 @@ int app_main(void)
         free(romPath);
     }
 
-
-    printf("NoFrendo start!\n");
-
     char* args[1] = { fileName };
+	printf("NoFrendo start!rom: %s\n",fileName);
     nofrendo_main(1, args);
 
     printf("NoFrendo died.\n");

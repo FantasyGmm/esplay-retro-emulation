@@ -424,7 +424,7 @@ void nes_emulate(void)
             float seconds = totalElapsedTime / (CONFIG_ESP32S3_DEFAULT_CPU_FREQ_MHZ * 1000000.0f);
             float fps = frame / seconds;
 
-            printf("HEAP:0x%x, FPS:%f\n", esp_get_free_heap_size(), fps);
+            printf("HEAP:%d kb, FPS:%f\n", esp_get_free_heap_size()/1024, fps);
 
             frame = 0;
             totalElapsedTime = 0;
@@ -500,7 +500,10 @@ int nes_insertcart(const char *filename, nes_t *machine)
     /* rom file */
     machine->rominfo = rom_load(filename);
     if (NULL == machine->rominfo)
-        goto _fail;
+    {
+	    printf("nes_insertcart %s rom load fail",filename);
+	    goto _fail;
+	}
 
     /* map cart's SRAM to CPU $6000-$7FFF */
     if (machine->rominfo->sram)
@@ -513,7 +516,10 @@ int nes_insertcart(const char *filename, nes_t *machine)
     /* mapper */
     machine->mmc = mmc_create(machine->rominfo);
     if (NULL == machine->mmc)
-        goto _fail;
+    {
+	    printf("nes_insertcart mmc create fail");
+	    goto _fail;
+	}
 
     /* if there's VRAM, let the PPU know */
     if (NULL != machine->rominfo->vram)

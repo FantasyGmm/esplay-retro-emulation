@@ -1,13 +1,9 @@
 #include <stdio.h>
-#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <ctype.h>
-
 #include "esp_partition.h"
 #include "esp_system.h"
-#include "esp_heap_caps.h"
 
 #ifndef GNUBOY_NO_MINIZIP
 /*
@@ -20,7 +16,6 @@
 
 #include "gnuboy.h"
 #include "defs.h"
-#include "regs.h"
 #include "mem.h"
 #include "hw.h"
 #include "lcd.h"
@@ -30,11 +25,8 @@
 
 #include "settings.h"
 #include "sdcard.h"
-#include "display.h"
-#include "../../main/display_gb.h"
 
 
-void* FlashAddress = 0;
 FILE* RomFile = NULL;
 uint8_t BankCache[512 / 8];
 
@@ -197,41 +189,35 @@ static byte *decompress(byte *data, int *len)
 int rom_load()
 {
 	byte c, *data, *header;
-	int len = 0, rlen;
+	int rlen;
 
-	data = (void*)0x3f800000;
-
+//	data = (void*)0x3f800000;
+	data = (void*)0x3D000000;
 	char *romPath = settings_load_str(SettingRomPath);
-
 	if (!romPath)
 	{
 		printf("loader: Reading from flash.\n");
-
-		// copy from flash
-		spi_flash_mmap_handle_t hrom;
-
-		const esp_partition_t* part = esp_partition_find_first(0x40, 0, NULL);
-		if (part == 0)
-		{
-			printf("esp_partition_find_first failed.\n");
-			abort();
-		}
-
-		void* flashAddress;
-		for (size_t offset = 0; offset < 0x400000; offset += 0x100000)
-		{
-			esp_err_t err = esp_partition_read(part, offset, (void *)(data + offset), 0x100000);
-			if (err != ESP_OK)
-			{
-				printf("esp_partition_read failed. size = %x, offset = %x (%d)\n", part->size, offset, err);
-				abort();
-			}
-		}
+//
+//		// copy from flash
+//		const esp_partition_t* part = esp_partition_find_first(0x40, 0, NULL);
+//		if (part == 0)
+//		{
+//			printf("esp_partition_find_first failed.\n");
+//			abort();
+//		}
+//		for (size_t offset = 0; offset < 0x400000; offset += 0x100000)
+//		{
+//			esp_err_t err = esp_partition_read(part, offset, (void *)(data + offset), 0x100000);
+//			if (err != ESP_OK)
+//			{
+//				printf("esp_partition_read failed. size = %x, offset = %x (%d)\n", part->size, offset, err);
+//				abort();
+//			}
+//		}
 	}
 	else
 	{
-		printf("loader: Reading from sdcard.\n");
-
+		printf("rom_load: Reading from sdcard,romPath='%s\n", romPath);
 		// copy from SD card
 		esp_err_t r = sdcard_open(SD_BASE_PATH);
 		if (r != ESP_OK)
@@ -239,52 +225,72 @@ int rom_load()
 			//odroid_display_show_sderr(ODROID_SD_ERR_NOCARD);
 			abort();
 		}
-
 		// load the first 16k
 		RomFile = fopen(romPath, "rb");
 		if (RomFile == NULL)
 		{
-			printf("loader: fopen failed.\n");
+			printf("rom_load: fopen failed.\n");
                         //odroid_display_show_sderr(ODROID_SD_ERR_BADFILE);
 			abort();
 		}
-
+		//get size
+		fseek(RomFile,0L,SEEK_END);
+		long romSize = ftell(RomFile);
+		rewind(RomFile);
+		printf("rom_load: file size: %ld\n",romSize/1024);
+		data = malloc(sizeof(uint8_t)*romSize);
+		if (data == NULL)
+		{
+			printf("rom_load: malloc mem fail");
+			abort();
+		}
+		memset(data,0,sizeof(uint8_t)*romSize);
+		printf("rom_load: malloc mem size:%ld kb，address:%#x.\n",sizeof(uint8_t)*romSize/1024,(size_t)data);
+		printf("rom_load: free heap: %d kb,%d mb\n",esp_get_free_heap_size()/1024,esp_get_free_heap_size()/1024/1024);
+		printf("rom_load: free internal heap: %d kb\n",esp_get_free_internal_heap_size()/1024);
 		// copy
-#if 0
+#if 1
 		const size_t BLOCK_SIZE = 512;
 		for (size_t offset = 0; offset < 0x4000; offset += BLOCK_SIZE)
 		{
 			size_t count = fread((uint8_t*)data + offset, 1, BLOCK_SIZE, RomFile);
-			__asm__("nop");
-			__asm__("nop");
-			__asm__("nop");
-			__asm__("nop");
-			__asm__("memw");
-
+//			__asm__("nop");
+//			__asm__("nop");
+//			__asm__("nop");
+//			__asm__("nop");
+//			__asm__("memw");
 			if (count < BLOCK_SIZE) break;
 		}
 #else
 		size_t count = fread((uint8_t*)data, 1, 0x4000, RomFile);
+		printf("loader: read count: %d\n",count);
+//		size_t *a = data;
+//		for (int i = 0; i < count; ++i)
+//		{
+//			printf("loader: read address:%0X value: %0X\n",(int )a,*a);
+//			a += sizeof(size_t);
+//		}
 		if (count < 0x4000)
 		{
-                        //odroid_display_show_sderr(ODROID_SD_ERR_BADFILE);
+            //odroid_display_show_sderr(ODROID_SD_ERR_BADFILE);
 			printf("loader: fread failed.\n");
 			abort();
 		}
+
 #endif
 
 		BankCache[0] = 1;
 	}
 
 
-	printf("Initialized. ROM@%p\n", data);
+	printf("rom_load: Initialized. ROM@%p\n", data);
 	header = data;
 
 	memcpy(rom.name, header+0x0134, 16);
 	//if (rom.name[14] & 0x80) rom.name[14] = 0;
 	//if (rom.name[15] & 0x80) rom.name[15] = 0;
 	rom.name[16] = 0;
-	printf("loader: rom.name='%s'\n", rom.name);
+	printf("rom_load: rom.name='%s'\n", rom.name);
 
 	int tmp = *((int*)(header + 0x0144));
 	c = (tmp >> 24) & 0xff;
@@ -341,7 +347,7 @@ int rom_load()
 
 	rlen = 16384 * mbc.romsize;
 	int sram_length = 8192 * mbc.ramsize;
-	printf("loader: mbc.type=%s, mbc.romsize=%d (%dK), mbc.ramsize=%d (%dK)\n", mbcName, mbc.romsize, rlen / 1024, mbc.ramsize, sram_length / 1024);
+	printf("rom_load: mbc.type=%s, mbc.romsize=%d (%dK), mbc.ramsize=%d (%dK)\n", mbcName, mbc.romsize, rlen / 1024, mbc.ramsize, sram_length / 1024);
 
 	// ROM
 	rom.bank[0] = data;
@@ -358,11 +364,11 @@ int rom_load()
 			sram_length <= 0x100000)
 		{
 			ram.sbank = data + (0x100000 * 3);
-			printf("SRAM using PSRAM.\n");
+			printf("rom_load: SRAM using PSRAM.\n");
 		}
 		else
 		{
-			printf("No free spece for SRAM.\n");
+			printf("rom_load: No free spece for SRAM.\n");
 			abort();
 		}
 	}
@@ -391,7 +397,6 @@ int sram_load()
 
 
 	const esp_partition_t* part;
-	spi_flash_mmap_handle_t hrom;
 	esp_err_t err;
 
 	part=esp_partition_find_first(0x40, 2, NULL);
@@ -425,7 +430,6 @@ int sram_save()
 		return -1;
 
 	const esp_partition_t* part;
-	spi_flash_mmap_handle_t hrom;
 	esp_err_t err;
 
 	part=esp_partition_find_first(0x40, 2, NULL);
